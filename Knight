@@ -1,0 +1,109 @@
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+package characters; //not a thing yet
+// not sure if we even want a class called PlayerCharacters but we can always change later
+public class Knight extends PlayerCharacters (name1){ // playerCharacters is not a thing yet
+	private static int health = 50;
+	private static double damage = 15.0;
+	private static double crit = 0.0;
+	private static int moveSpeed = 5; // All 4 characters move the same speed
+	private static String name = name1; // needs to be sent and caught from superclass
+	private static volatile boolean wPressed = false;
+	private static volatile boolean aPressed = false;
+	private static volatile boolean sPressed = false;
+	private static volatile boolean dPressed = false;
+	private static volatile boolean ePressed = false;
+    public static boolean isWPressed() {
+        synchronized (Knight.class) {
+            return wPressed;
+        }
+    }
+    public static boolean isAPressed() {
+        synchronized (Knight.class) {
+            return aPressed;
+        }
+    }
+    public static boolean isSPressed() {
+        synchronized (Knight.class) {
+            return sPressed;
+        }
+    }
+    public static boolean isDPressed() {
+        synchronized (Knight.class) {
+            return dPressed;
+        }
+    }
+    public static boolean isEPressed() {
+        synchronized (Knight.class) {
+            return ePressed;
+        }
+    }
+	
+	public static void main(String[] args) {
+		crit = damage * 1.66;
+		long startTime = 0;
+		float x = 28;
+        float y = 36; // Knight's spawn point in the open world map
+        boolean abilityAvailable = true;
+        long elapsedTime = 0;
+        while (true) {
+        	elapsedTime = System.currentTimeMillis() - startTime;
+            long elapsedSeconds = elapsedTime / 1000;
+        	if (elapsedSeconds > 20) {
+            abilityAvailable = true;
+        	}
+        	KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent ke) {
+                synchronized (Knight.class) {
+                    switch (ke.getID()) {
+                    case KeyEvent.KEY_PRESSED:
+                        if (ke.getKeyCode() == KeyEvent.VK_W) {
+                        	x -= moveSpeed;
+                        	wPressed = true;
+                        }
+                        if (ke.getKeyCode() == KeyEvent.VK_A) {
+                        	x += moveSpeed;
+                        	aPressed = true;
+                        }
+                        if (ke.getKeyCode() == KeyEvent.VK_S) {
+                        	y += moveSpeed;
+                        	sPressed = true;
+                        }
+                        if (ke.getKeyCode() == KeyEvent.VK_D) {
+                            y -= moveSpeed;
+                            dPressed = true;
+                        }
+                        if ((ke.getKeyCode() == KeyEvent.VK_E) && (abilityAvailable == true)) {
+                            ePressed = true;
+                        	PlayerAbilities.Dash dash = new PlayerAbilities.Dash();
+                        	abilityAvailable = false;
+                        	startTime = System.currentTimeMillis();
+                			} //knight can use dash ability by pressing E key, 20 second cooldown below
+                        }
+                        break;
+                    }
+                    return false;
+                }
+            });
+        }
+	}
+    
+    public int getKnightHealth() {
+        return health;
+    }
+    
+    public void setKnightHealth(int newHealth) {
+        health = newHealth;
+    }
+    
+    public double getKnightDamage() {
+        return damage;
+    }
+    
+    public void setKnightDamage(int newDamage) {
+        damage = newDamage;
+        crit = newDamage * 1.66; // i used all 3 of my braincells for this one
+    }
+}

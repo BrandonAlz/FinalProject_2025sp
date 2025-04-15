@@ -2,10 +2,12 @@ package characters;
 
 public class Skeleton extends EnemyCharacter {
 	private int moveSpeed;
-    public Spider() {
-    	String name, int health, int damage, int energy, int xpReward = super("Skeleton", 28, 14, 55, 35); // name, health, damage, energy, xp reward
-        setDifficulty(2);
+	String name, int health, int damage, int energy, int xpReward = super("Skeleton", 28, 14, 55, 35); // name, health, damage, energy, xp reward
+	public static void main(String[] args) {
         this.moveSpeed = 2; // Skeletons barely move at all
+        Skeleton mySkeleton = new Skeleton();
+        mySkeleton.scaleToPlayerLevel(3);
+        mySkeleton.setDifficulty(2);
     }
     
     public int getMoveSpeed() {

@@ -46,7 +46,7 @@ public class SScreen extends JFrame {
         JTextField named = new JTextField(); 
         
         panel.setFont(new Font("Arial", Font.PLAIN, 36));
-        String[] classes = {"Knight", "Mage", "Archer"};
+        String[] classes = {"Knight", "Mage", "Archer","Gambler"};
         JComboBox<String> classBox = new JComboBox<>(classes);
         
         

@@ -6,15 +6,15 @@ package characters;
 /**
  * 
  */
-public class Bull extends PlayerCharacter {
+public class Gambler extends PlayerCharacter {
 	
-	 public Bull(String name) {
-	        super(name, 100, 30, 120, 10); // name, health, damage, energy, crit
+	 public Gambler(String name) {
+	        super(name, 70, 26, 120, 50); // name, health, damage, energy, crit
 
-	        // Bull abilities 
+	        // Gambler abilities 
 	        
-	        PlayerAbilities.GroundPound stomp = new PlayerAbilities.GroundPound();
-	        stomp.setDescription("A powerful stomp that damages and stuns enemies within range.");
+	        PlayerAbilities.Gamble = new PlayerAbilities.Gamble();
+	        stomp.setDescription("Bets 5 coins that he will do more damage in the next 10 seconds than archer. If he wins, he takes 5 coins from");
 	        addAbility(stomp);
     
 	 }

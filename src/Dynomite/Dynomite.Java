@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.model.PutItemResult;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+package Dynomite;
 
 public class CreateUser {
 
@@ -26,7 +27,7 @@ public class CreateUser {
     private static final List<Ability> abilities;
 
     public static void main(String[] args) {
-        // Create a DynamoDB client
+       
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1) 
                 .build();
@@ -43,9 +44,8 @@ public class CreateUser {
         item.put(USERNAME_ATTRIBUTE, new AttributeValue().withS(username));
         item.put(EMAIL_ATTRIBUTE, new AttributeValue().withS(email));
         item.put(CHARACTER_PROTOTYPE_ATTRIBUTE, new AttributeValue().withS(characterPrototype));
-        // Add other attributes as needed (e.g., level, experiencePoints)
-        // Example for a Number attribute:
-        // item.put("level", new AttributeValue().withN("1"));
+        // Add other attributes
+      
 
      
         PutItemRequest putItemRequest = new PutItemRequest()

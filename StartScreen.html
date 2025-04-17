@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: none;
+            width: 800px;
+            height: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .container.active {
+            display: block;
+        }
+        .title-screen,
+        .character-creation-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .character-creation-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        .character-creation-screen label {
+            font-size: 24px;
+        }
+        .character-creation-screen input,
+        .character-creation-screen select {
+            padding: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container title-screen active">
+        <h1>Final Quest</h1>
+        <button onclick="showCharacterCreationScreen()">Start Game</button>
+    </div>
+
+    <div class="container character-creation-screen">
+        <label for="name">Character Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter your character's name" />
+        
+        <label for="class">Class:</label>
+        <select id="class" name="class">
+            <option value="Knight">Knight</option>
+            <option value="Mage">Mage</option>
+            <option value="Archer">Archer</option>
+			<option value="Gambler">Gambler</option>
+        </select>
+
+        <button onclick="createCharacter()">Create Character</button>
+    </div>
+
+    <script>
+        // Switch between screens
+        function showCharacterCreationScreen() {
+            document.querySelector('.title-screen').classList.remove('active');
+            document.querySelector('.character-creation-screen').classList.add('active');
+        }
+
+        function createCharacter() {
+            const name = document.getElementById('name').value;
+            const chosenClass = document.getElementById('class').value;
+            alert(`Character Created!\nName: ${name}\nClass: ${chosenClass}`);
+        }
+    </script>
+</body>
+</html>

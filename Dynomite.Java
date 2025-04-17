@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class CreateUser {
 
-    private static final String TABLE_NAME = "GameUsers"; // Replace with your table name
+    private static final String TABLE_NAME = "GameUsers"; 
     private static final String USER_ID_ATTRIBUTE = "userId";
     private static final String USERNAME_ATTRIBUTE = "username";
     private static final String EMAIL_ATTRIBUTE = "email";

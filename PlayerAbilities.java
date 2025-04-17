@@ -46,28 +46,22 @@ public class PlayerAbilities {
         }
     }
     
-    // FIGHTER ABILITIES
-    public static class GroundPound extends Ability {
-        private int damage;
-        private int stunDuration;
+    // Gambler ABILITIES
+    public static class Gambler extends Ability {
+        private int damageCount;
         
         public GroundPound() {
-            super("Ground Pound", 10, 20); // name, cooldown in seconds, energy cost
-            this.damage = 30;
-            this.stunDuration = 2; // seconds
+            super("Gamble", 10, 20); // name, cooldown in seconds, energy cost
+            this.damageCount = 0; // to be finished later
         }
         
         public int getDamage() {
             return damage;
         }
         
-        public int getStunDuration() {
-            return stunDuration;
-        }
-        
         @Override
         public void use(Character user) {
-            // Implementation would damage and stun all nearby enemies
+            // Implementation will bet
         }
     }
     

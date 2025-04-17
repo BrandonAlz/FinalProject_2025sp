@@ -61,8 +61,8 @@ public class CreateUser {
         } catch (AmazonServiceException e) {
             System.err.println("Error adding user: " + e.getMessage());
         } finally {
-            // Optional: Shut down the client
-            // client.shutdown();
+            // Optional: close
+            
         }
     }
 }

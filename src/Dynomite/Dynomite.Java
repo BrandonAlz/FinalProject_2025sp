@@ -17,12 +17,18 @@ public class CreateUser {
     private static final String USERNAME_ATTRIBUTE = "username";
     private static final String EMAIL_ATTRIBUTE = "email";
     private static final String CHARACTER_PROTOTYPE_ATTRIBUTE = "characterPrototype";
-  
+    private static final String name;
+    private static final int health;
+    private static final int maxHealth;
+    private static final int damage;
+    private static final int energy;
+    private static final int maxEnergy;
+    private static final List<Ability> abilities;
 
     public static void main(String[] args) {
         // Create a DynamoDB client
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.US_EAST_1) // Replace with your AWS region
+                .withRegion(Regions.US_EAST_1) 
                 .build();
 
         // Create a new user's data

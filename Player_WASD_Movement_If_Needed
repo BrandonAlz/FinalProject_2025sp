@@ -51,7 +51,7 @@ public class Knight extends PlayerCharacters (name1){ // playerCharacters is not
         	elapsedTime = System.currentTimeMillis() - startTime;
             long elapsedSeconds = elapsedTime / 1000;
         	if (elapsedSeconds > 20) {
-            abilityAvailable = true;
+            abilityAvailable = true; // 20 second ability cooldown
         	}
         	KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             @Override
@@ -80,7 +80,7 @@ public class Knight extends PlayerCharacters (name1){ // playerCharacters is not
                         	PlayerAbilities.Dash dash = new PlayerAbilities.Dash();
                         	abilityAvailable = false;
                         	startTime = System.currentTimeMillis();
-                			} //knight can use dash ability by pressing E key, 20 second cooldown below
+                			} //knight can use dash ability by pressing E key, 20 second cooldown above
                         }
                         break;
                     }

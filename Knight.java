@@ -13,7 +13,7 @@ public class Knight extends PlayerCharacter {
         	elapsedTime = System.currentTimeMillis() - startTime;
             long elapsedSeconds = elapsedTime / 1000;
         	if (elapsedSeconds > 20) {
-            abilityAvailable = true; // 20 second ability cooldown
+                abilityAvailable = true; // 20 second ability cooldown
         	}
         }
     }

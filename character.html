@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Quest</title>
+    <style>
+        /* --- General Styles --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .game-box {
+            width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input,
+        select,
+        button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-screen a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .auth-screen a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-screen #message {
+            margin-top: 10px;
+            font-size: 14px;
+            color: red;
+        }
+
+        .character-creation-screen label {
+            font-size: 18px;
+            text-align: left;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        #confirmCodeField {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #confirmPasswordField {
+            display: none;
+        }
+
+        /* Styles for combined screen */
+        .final-quest-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #finalQuestContent {
+            display: none; /* Initially hide the title and start button */
+        }
+
+        #characterCreation {
+            display: none; /* Initially hide character creation */
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        #characterCreation.active {
+            display: flex; /* Show character creation */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-box">
+        <div class="screen auth-screen active">
+            <h2 id="formTitle">Login</h2>
+            <form id="authForm">
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+
+                <div id="confirmPasswordField">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+                </div>
+
+                <button type="submit" id="submitBtn">Login</button>
+
+                <div id="confirmCodeField">
+                    <input type="text" id="confirmCode" name="confirmCode" placeholder="Confirmation Code">
+                    <button type="button" id="confirmCodeBtn">Confirm Account</button>
+                    <button type="button" id="resendCodeBtn" style="display: none;">Resend Code</button>
+                </div>
+                <p id="message"></p>
+            </form>
+            <a href="#" id="toggleMode">Don't have an account? Sign up</a>
+        </div>
+
+        <div class="screen final-quest-screen">
+            <div id="finalQuestContent">
+                <h1>Final Quest</h1>
+                <button id="startGameBtn">Start Game</button>
+            </div>
+
+            <div id="characterCreation">
+                <h2>Create Your Hero</h2>
+                <label for="name">Character Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your character's name">
+
+                <label for="class">Class:</label>
+                <select id="class" name="class">
+                    <option value="Knight">Knight</option>
+                    <option value="Mage">Mage</option>
+                    <option value="Archer">Archer</option>
+                    <option value="Gambler">Gambler</option>
+                </select>
+
+                <button id="createCharacterBtn">Create Character</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify/dist/aws-amplify.min.js"></script>
+    <script>
+        const Amplify = window.aws_amplify.Amplify;
+        const Auth = window.aws_amplify.Auth;
+
+        Amplify.configure({
+            Auth: {
+                region: "us-east-2",
+                userPoolId: "us-east-2_Czl1ZsXp1",
+                userPoolWebClientId: "5oer0age0upepjc0m5loutffso"
+            }
+        });
+
+        // --- Global Variables ---
+        let isSignUp = false;
+
+        // --- DOM Element Selectors ---
+        const authScreen = document.querySelector('.auth-screen');
+        const finalQuestScreen = document.querySelector('.final-quest-screen');
+        const finalQuestContent = document.getElementById('finalQuestContent');
+        const characterCreation = document.getElementById('characterCreation');
+        const authForm = document.getElementById('authForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const confirmPasswordField = document.getElementById('confirmPasswordField');
+        const message = document.getElementById('message');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const toggleMode = document.getElementById('toggleMode');
+        const confirmCodeField = document.getElementById('confirmCodeField');
+        const confirmCodeInput = document.getElementById('confirmCode');
+        const confirmCodeBtn = document.getElementById('confirmCodeBtn');
+        const resendCodeBtn = document.getElementById('resendCodeBtn');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const createCharacterBtn = document.getElementById('createCharacterBtn');
+        const nameInput = document.getElementById('name');
+        const classSelect = document.getElementById('class');
+
+        // --- Utility Function (Global Scope) ---
+        function displayMessage(text, color) {
+            const messageElement = document.getElementById('message');
+            if (messageElement) {
+                messageElement.textContent = text;
+                messageElement.style.color = color;
+            } else {
+                console.error("Error: #message element not found in displayMessage!");
+            }
+        }
+
+        // Wrap ALL DOM manipulation in DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Initialization ---
+            hideAllScreens();
+            authScreen.classList.add('active');
+
+            confirmCodeField.style.display = 'none';
+            confirmPasswordField.style.display = 'none';
+            resendCodeBtn.style.display = 'none';
+
+            // --- Functions to Show/Hide Screens ---
+            function hideAllScreens() {
+                const screens = document.querySelectorAll('.screen');
+                screens.forEach(screen => screen.classList.remove('active'));
+            }
+
+            function showAuthScreen() {
+                hideAllScreens();
+                authScreen.classList.add('active');
+            }
+
+            function showFinalQuestScreen() {
+                hideAllScreens();
+                finalQuestScreen.classList.add('active');
+                finalQuestContent.style.display = 'flex'; // Show title and start button
+            }
+
+            // --- Event Listeners ---
+            toggleMode.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleAuthMode();
+            });
+
+            authForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                handleAuthSubmit(e);
+            });
+
+            confirmCodeBtn.addEventListener('click', () => {
+                confirmUserAccount();
+            });
+
+            resendCodeBtn.addEventListener('click', () => {
+                resendConfirmationCode();
+            });
+
+            startGameBtn.addEventListener('click', () => {
+                finalQuestContent.style.display = 'none'; // Hide title and start button
+                characterCreation.style.display = 'flex'; // Show character creation
+            });
+
+            createCharacterBtn.addEventListener('click', () => {
+                createCharacter();
+            });
+
+            // --- Authentication Functions ---
+            function toggleAuthMode() {
+                // Detailed checks for each element
+                if (!formTitle) console.error("#formTitle element not found!");
+                if (!submitBtn) console.error("#submitBtn element not found!");
+                if (!toggleMode) console.error("#toggleMode element not found!");
+
+                // Proceed only if all elements are found
+                if (formTitle && submitBtn && toggleMode) {
+                    isSignUp = !isSignUp;
+                    formTitle.textContent = isSignUp ? "Sign Up" : "Login";
+                    submitBtn.textContent = isSignUp ? "Sign Up" : "Login";
+                    toggleMode.textContent = isSignUp
+                        ? "Already have an account? Log in"
+                        : "Don't have an account? Sign up";
+
+                    confirmPasswordField.style.display = isSignUp ? 'block' : 'none';
+                    confirmPasswordInput.required = isSignUp;
+                    confirmPasswordInput.disabled = !isSignUp;
+                    confirmCodeField.style.display = 'none';
+                    resendCodeBtn.style.display = 'none';
+                    if (message) message.textContent = ''; // Safe message clearing
+                    if (!isSignUp) {
+                        confirmPasswordInput.value = '';
+                    }
+                } else {
+                    console.error("Error: One or more auth form elements not found in toggleAuthMode!");
+                }
+            }
+
+            async function handleAuthSubmit(e) {
+                e.preventDefault();
+                if (message) message.textContent = ''; // Safe message clearing
+                const email = emailInput.value;
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                try {
+                    if (isSignUp) {
+                        if (password !== confirmPassword) {
+                            displayMessage("Passwords do not match.", "red");
+                            return;
+                        }
+                        await Auth.signUp({
+                            username: email,
+                            password,
+                            attributes: { email }
+                        });
+                        displayMessage("Sign up successful! Please check your email to confirm.", "green");
+                        confirmCodeField.style.display = 'flex';
+                        resendCodeBtn.style.display = 'block';
+                    } else {
+                        await Auth.signIn(email, password);
+                        displayMessage("Login successful!", "green");
+                        showFinalQuestScreen(); // Show the combined screen
+                    }
+                } catch (error) {
+                    displayMessage(`Error: ${error.message}`, "red");
+                }
+            }
+
+            async function confirmUserAccount() {
+                try {
+                    await Auth.confirmSignUp(emailInput.value, confirmCodeInput.value);
+                    displayMessage("Account confirmed! You can now log in.", "green");
+                    confirmCodeField.style.display = 'none';
+                    resendCodeBtn.style.display = 'none';
+                    showAuthScreen();
+                } catch (error) {
+                    displayMessage(`Confirmation error: ${error.message}`, "red");
+                }
+            }
+
+            async function resendConfirmationCode() {
+                displayMessage('Resending code...', 'orange');
+                try {
+                    await Auth.resendSignUp(emailInput.value);
+                    displayMessage('Verification code resent to your email.', 'green');
+                } catch (error) {
+                    displayMessage(`Error resending code: ${error.message}`, "red");
+                }
+            }
+
+            // --- Game Functions ---
+            function createCharacter() {
+                const name = nameInput.value;
+                const chosenClass = classSelect.value;
+                alert(`Character Created!\nName: ${name}\nClass: ${chosenClass}`);
+                // In a real game, you would now proceed to the game world.
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -21,5 +21,9 @@ public class Knight extends PlayerCharacter {
                 public int getLives {
                         return lives;
                 }
+
+                public void isAlive {
+                        return knightAlive;
+                }
         }
 }
